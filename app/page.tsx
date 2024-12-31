@@ -1,7 +1,8 @@
 'use client';
 
-import { use, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getDisplayTime } from './function';
+import { Button } from './Button';
 
 export default function Page() {
   // 時間
@@ -10,19 +11,22 @@ export default function Page() {
   enum Status {
     PROGRESS = 'PROGRESS',
     STOP = 'STOP',
+    ALARM = 'ALARM',
   }
   const [status, setStatus] = useState<Status>(Status.STOP);
   // ref
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    console.log('status:', status);
     if (status === Status.PROGRESS) {
       intervalRef.current = setInterval(() => {
         setTime((prev) => {
           if (prev < 1) {
             clearInterval(intervalRef.current!);
-            setStatus(Status.STOP);
+            setStatus(Status.ALARM);
+            // 音を鳴らす
+            audioRef.current?.play();
             return 0;
           }
           return prev - 1;
@@ -39,10 +43,6 @@ export default function Page() {
       }
     };
   }, [status]);
-
-  useEffect(() => {
-    console.log('time:', time);
-  }, [time]);
 
   return (
     <div
@@ -95,35 +95,20 @@ export default function Page() {
           <Button
             name={status === Status.STOP ? 'スタート' : '停止'}
             onClick={() => {
-              setStatus(status === Status.STOP ? Status.PROGRESS : Status.STOP);
+              if (status === Status.STOP) {
+                setStatus(Status.PROGRESS);
+              } else if (status === Status.PROGRESS) {
+                setStatus(Status.STOP);
+              } else if (status === Status.ALARM) {
+                setStatus(Status.STOP);
+                audioRef.current?.pause();
+              }
             }}
+            disabled={status === Status.STOP && time === 0}
           />
         </div>
       </div>
+      <audio ref={audioRef} src="/alarm.mp3" preload="auto" loop></audio>
     </div>
   );
 }
-
-type ButtonProps = {
-  name: string;
-  onClick: () => void;
-};
-
-const Button = (props: ButtonProps) => {
-  const { name, onClick } = props;
-  return (
-    <button
-      style={{
-        width: '120px',
-        height: '50px',
-        fontSize: '16px',
-        border: '1px solid #ebebeb',
-        backgroundColor: '#f6f6f6',
-        borderRadius: '8px',
-      }}
-      onClick={onClick}
-    >
-      {name}
-    </button>
-  );
-};
