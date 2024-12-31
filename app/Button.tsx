@@ -3,14 +3,15 @@ type ButtonProps = {
   name: string;
   onClick: () => void;
   disabled?: boolean;
+  width: string;
 };
 
 export const Button = (props: ButtonProps) => {
-  const { name, onClick, disabled = false } = props;
+  const { name, onClick, disabled = false, width } = props;
   return (
     <button
       style={{
-        width: '120px',
+        width: width,
         height: '50px',
         fontSize: '16px',
         border: '1px solid #ebebeb',

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { getDisplayTime } from './function';
 import { Button } from './Button';
+import { Spacer } from './Spacer';
 
 export default function Page() {
   // 時間
@@ -70,28 +71,32 @@ export default function Page() {
           }}
         >
           <Button
+            name="リセット"
+            onClick={() => {
+              setTime(0);
+              setStatus(Status.STOP);
+              audioRef.current?.pause();
+            }}
+            width="120px"
+          />
+          <Spacer width="4px" />
+          <Button
             name="分"
             onClick={() => {
               console.log('分');
               setTime((prev) => prev + 60);
             }}
+            width="60px"
           />
-          <div
-            style={{
-              width: '4px',
-            }}
-          ></div>
+          <Spacer width="4px" />
           <Button
             name="秒"
             onClick={() => {
               setTime((prev) => prev + 1);
             }}
+            width="60px"
           />
-          <div
-            style={{
-              width: '4px',
-            }}
-          ></div>
+          <Spacer width="4px" />
           <Button
             name={status === Status.STOP ? 'スタート' : '停止'}
             onClick={() => {
@@ -105,6 +110,7 @@ export default function Page() {
               }
             }}
             disabled={status === Status.STOP && time === 0}
+            width="120px"
           />
         </div>
       </div>
