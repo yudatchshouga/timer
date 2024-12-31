@@ -4,8 +4,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="jp">
+      <body
+        style={{
+          margin: 0,
+        }}
+      >
+        {children}
+      </body>
     </html>
   );
 }
