@@ -1,16 +1,17 @@
 'use client';
 
 import { use, useEffect, useRef, useState } from 'react';
+import { getDisplayTime } from './function';
 
 export default function Page() {
   // 時間
-  const [time, setTime] = useState<number>(2);
+  const [time, setTime] = useState<number>(300);
   // 状態
   enum Status {
     PROGRESS = 'PROGRESS',
     STOP = 'STOP',
   }
-  const [status, setStatus] = useState<Status>(Status.PROGRESS);
+  const [status, setStatus] = useState<Status>(Status.STOP);
   // ref
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -52,14 +53,15 @@ export default function Page() {
         alignItems: 'center',
       }}
     >
-      <div>
+      <div style={{}}>
         <div
           style={{
-            fontSize: '72px',
+            fontSize: '100px',
             fontFamily: 'Roboto, sans-serif',
+            textAlign: 'center',
           }}
         >
-          {time}
+          {getDisplayTime(time)}
         </div>
         <div
           style={{
@@ -71,6 +73,7 @@ export default function Page() {
             name="分"
             onClick={() => {
               console.log('分');
+              setTime((prev) => prev + 60);
             }}
           />
           <div
@@ -81,7 +84,7 @@ export default function Page() {
           <Button
             name="秒"
             onClick={() => {
-              console.log('秒');
+              setTime((prev) => prev + 1);
             }}
           />
           <div
@@ -90,9 +93,9 @@ export default function Page() {
             }}
           ></div>
           <Button
-            name="スタート"
+            name={status === Status.STOP ? 'スタート' : '停止'}
             onClick={() => {
-              console.log('スタート');
+              setStatus(status === Status.STOP ? Status.PROGRESS : Status.STOP);
             }}
           />
         </div>
@@ -111,8 +114,8 @@ const Button = (props: ButtonProps) => {
   return (
     <button
       style={{
-        width: '150px',
-        height: '60px',
+        width: '120px',
+        height: '50px',
         fontSize: '16px',
         border: '1px solid #ebebeb',
         backgroundColor: '#f6f6f6',
